@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/24 16:32:07 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:57:30 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_philo
 	unsigned int		id;
 	struct s_simulation	sim;
 	pthread_mutex_t		fork;
+	pthread_t			thread;
 }	t_philo;
 
 void	ft_perror(char *msg);
