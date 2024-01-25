@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/25 10:48:03 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/25 18:21:08 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,49 @@
 # include <unistd.h>
 # include <stdbool.h>
 # include <pthread.h>
+# include <stdio.h>
+# include <sys/time.h>
 
 # define USAGE_ERR "usage: ./philo <number_of_philo> <time_to_die> <time_to_eat> \
 <time_to_sleep> [number_of_meals]"
 # define INVALID_ARGS_ERR "an invalid argument was entered"
 # define THREAD_CREATE_ERR "could not create thread"
-# define THREAD_JOIN_ERR "could not join thread"
+# define THREAD_DETACH_ERR "could not detach thread"
 # define MALLOC_ERR "a memory allocation error occurred"
 # define MUTEX_INIT_ERR "could not initialize mutex"
+# define GET_TIME_ERR "could not access time"
+
+# define TAKEN_FORK "has taken a fork"
+# define THINKING "is thinking"
+# define SLEEPING "is sleeping"
+# define EATING "is eating"
+# define DIED "died"
 
 typedef struct s_simulation
 {
-	unsigned int	number_of_philo;
-	unsigned int	time_to_die;
-	unsigned int	time_to_eat;
-	unsigned int	time_to_sleep;
-	unsigned int	number_of_meals;
-	struct s_philo	*philos;
-	pthread_mutex_t	write;
-	bool			quit;
+	unsigned int		number_of_philo;
+	unsigned int		time_to_die;
+	unsigned int		time_to_eat;
+	unsigned int		time_to_sleep;
+	unsigned int		number_of_meals;
+	struct s_philo		*philos;
+	pthread_mutex_t		write;
+	bool				quit;
+	unsigned long long	start_time;
 }	t_simulation;
 
 typedef struct s_philo
 {
 	unsigned int		id;
-	struct s_simulation	sim;
+	struct s_simulation	*sim;
 	pthread_mutex_t		fork;
 	pthread_t			thread;
 }	t_philo;
 
-int		sim_init(t_simulation *sim, int argc, char **argv);
-void	sim_destroy(t_simulation sim);
+int					sim_init(t_simulation *sim, int argc, char **argv);
+void				sim_destroy(t_simulation sim);
 
-void	ft_perror(char *msg);
+void				ft_perror(char *msg);
+unsigned long long	get_time(void);
 
 #endif /* PHILO_H */

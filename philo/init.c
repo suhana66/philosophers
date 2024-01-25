@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/25 10:50:01 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/25 18:20:59 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static int	philos_init(t_simulation *sim)
 	while (++i < (int)sim->number_of_philo)
 	{
 		sim->philos[i].id = i + 1;
-		sim->philos[i].sim = *sim;
+		sim->philos[i].sim = sim;
 		if (pthread_mutex_init(&sim->philos[i].fork, NULL))
 		{
 			while (--i)
