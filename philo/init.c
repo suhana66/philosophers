@@ -6,13 +6,13 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/25 18:20:59 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/26 08:47:34 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	str_to_uint(char *str, unsigned int *result);
+static int	str_to_unsigned(char *str, size_t *result);
 static int	philos_init(t_simulation *sim);
 
 int	sim_init(t_simulation *sim, int argc, char **argv)
@@ -21,11 +21,12 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 		return (ft_perror(USAGE_ERR), 1);
 	sim->quit = false;
 	sim->number_of_meals = -1;
-	if (str_to_uint(argv[0], &sim->number_of_philo) || !sim->number_of_philo
-		|| str_to_uint(argv[1], &sim->time_to_die)
-		|| str_to_uint(argv[2], &sim->time_to_eat)
-		|| str_to_uint(argv[3], &sim->time_to_sleep)
-		|| (argc == 5 && str_to_uint(argv[4], &sim->number_of_meals)))
+	if (str_to_unsigned(argv[0], &sim->number_of_philo)
+		|| sim->number_of_philo == 0
+		|| str_to_unsigned(argv[1], &sim->time_to_die)
+		|| str_to_unsigned(argv[2], &sim->time_to_eat)
+		|| str_to_unsigned(argv[3], &sim->time_to_sleep)
+		|| (argc == 5 && str_to_unsigned(argv[4], &sim->number_of_meals)))
 		return (ft_perror(INVALID_ARGS_ERR), 2);
 	if (pthread_mutex_init(&sim->write, NULL))
 		return (ft_perror(MUTEX_INIT_ERR), 3);
@@ -38,9 +39,9 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 	whitespace characters: '\t', '\n', '\v', '\f', '\r', ' '
 					ascii: 9, 10, 11, 12, 13, 32
 */
-static int	str_to_uint(char *str, unsigned int *result)
+static int	str_to_unsigned(char *str, size_t *result)
 {
-	unsigned int	prev_res;
+	size_t	prev_res;
 
 	if (!str || !result)
 		return (1);
@@ -65,29 +66,30 @@ static int	str_to_uint(char *str, unsigned int *result)
 
 static int	philos_init(t_simulation *sim)
 {
-	int	i;
+	size_t	i;
 
 	sim->philos = malloc(sizeof(t_philo) * sim->number_of_philo);
 	if (!sim->philos)
 		return (ft_perror(MALLOC_ERR), 1);
-	i = -1;
-	while (++i < (int)sim->number_of_philo)
+	i = 0;
+	while (i < sim->number_of_philo)
 	{
 		sim->philos[i].id = i + 1;
 		sim->philos[i].sim = sim;
 		if (pthread_mutex_init(&sim->philos[i].fork, NULL))
 		{
-			while (--i)
+			while (--i >= 0)
 				pthread_mutex_destroy(&sim->philos[i].fork);
 			return (free(sim->philos), ft_perror(MUTEX_INIT_ERR), 2);
 		}
+		i++;
 	}
 	return (0);
 }
 
 void	sim_destroy(t_simulation sim)
 {
-	unsigned int	i;
+	size_t	i;
 
 	pthread_mutex_destroy(&sim.write);
 	i = 0;
