@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 11:05:44 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/26 10:15:41 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/29 16:14:08 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,26 @@ size_t	get_time(void)
 
 	gettimeofday(&tv, NULL);
 	return ((size_t)tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+bool	print(t_philo *philo, char *action)
+{
+	pthread_mutex_lock(&philo->sim->write);
+	if (!philo->sim->quit
+		&& get_time() - philo->last_meal > philo->sim->time_to_die)
+	{
+		printf("%zu %zu %s\n",
+			get_time() - philo->sim->start_time, philo->id, DEAD);
+		philo->sim->quit = true;
+	}
+	if (philo->sim->quit)
+	{
+		pthread_mutex_unlock(&philo->sim->write);
+		return (false);
+	}
+	if (action)
+		printf("%zu %zu %s\n",
+			get_time() - philo->sim->start_time, philo->id, action);
+	pthread_mutex_unlock(&philo->sim->write);
+	return (true);
 }

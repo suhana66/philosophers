@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/26 12:39:06 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/26 14:03:20 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define THINKING "is thinking"
 # define SLEEPING "is sleeping"
 # define EATING "is eating"
-# define DIED "died"
+# define DEAD "died"
 
 typedef struct s_simulation
 {
@@ -63,5 +63,6 @@ void	sim_destroy(t_simulation sim);
 void	ft_perror(char *msg);
 void	ft_usleep(size_t milliseconds);
 size_t	get_time(void);
+bool	print(t_philo *philo, char *action);
 
 #endif /* PHILO_H */
