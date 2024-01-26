@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/26 10:16:01 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/26 12:39:06 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 <time_to_sleep> [number_of_meals]"
 # define INVALID_ARGS_ERR "an invalid argument was entered"
 # define THREAD_CREATE_ERR "could not create thread"
-# define THREAD_DETACH_ERR "could not detach thread"
+# define THREAD_JOIN_ERR "could not join thread"
 # define MALLOC_ERR "a memory allocation error occurred"
 # define MUTEX_INIT_ERR "could not initialize mutex"
 # define GET_TIME_ERR "could not access time"
