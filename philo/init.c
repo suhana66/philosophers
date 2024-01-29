@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/26 08:47:34 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/29 17:03:30 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 	if (argc != 4 && argc != 5)
 		return (ft_perror(USAGE_ERR), 1);
 	sim->quit = false;
-	sim->number_of_meals = -1;
+	sim->number_of_meals = 0;
 	if (str_to_unsigned(argv[0], &sim->number_of_philo)
 		|| sim->number_of_philo == 0
 		|| str_to_unsigned(argv[1], &sim->time_to_die)
