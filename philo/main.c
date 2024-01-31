@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:02:25 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/30 12:52:48 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/31 08:47:41 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ static void	routine(t_philo *philo)
 	}
 	while (print(philo, NULL))
 	{
-		if (eat(philo, fork1, fork2))
+		if ((!philo->sim->if_limit || philo->meal_counter
+				< philo->sim->number_of_meals) && eat(philo, fork1, fork2))
 			return ;
 		if (!print(philo, SLEEPING))
 			return ;
@@ -105,5 +106,6 @@ static int	eat(t_philo *philo, pthread_mutex_t *fork1, pthread_mutex_t *fork2)
 	ft_usleep(philo->sim->time_to_eat);
 	pthread_mutex_unlock(fork1);
 	pthread_mutex_unlock(fork2);
+	philo->meal_counter++;
 	return (0);
 }

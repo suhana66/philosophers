@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/26 14:03:20 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/31 08:10:56 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_simulation
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
 	size_t			number_of_meals;
+	bool			if_limit;
 	struct s_philo	*philos;
 	pthread_mutex_t	write;
 	bool			quit;
@@ -55,6 +56,7 @@ typedef struct s_philo
 	pthread_mutex_t		fork;
 	pthread_t			thread;
 	size_t				last_meal;
+	size_t				meal_counter;
 }	t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
