@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/31 08:10:36 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/31 13:01:03 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 		|| str_to_unsigned(argv[3], &sim->time_to_sleep)
 		|| (sim->if_limit && str_to_unsigned(argv[4], &sim->number_of_meals)))
 		return (ft_perror(INVALID_ARGS_ERR), 2);
-	if (pthread_mutex_init(&sim->write, NULL))
+	if (pthread_mutex_init(&sim->mutex, NULL))
 		return (ft_perror(MUTEX_INIT_ERR), 3);
 	if (philos_init(sim))
-		return (pthread_mutex_destroy(&sim->write), 4);
+		return (pthread_mutex_destroy(&sim->mutex), 4);
 	return (0);
 }
 
@@ -92,7 +92,7 @@ void	sim_destroy(t_simulation sim)
 {
 	size_t	i;
 
-	pthread_mutex_destroy(&sim.write);
+	pthread_mutex_destroy(&sim.mutex);
 	i = 0;
 	while (i < sim.number_of_philo)
 		pthread_mutex_destroy(&sim.philos[i++].fork);

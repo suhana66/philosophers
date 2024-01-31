@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/31 08:10:56 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/31 13:00:59 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct s_simulation
 	size_t			number_of_meals;
 	bool			if_limit;
 	struct s_philo	*philos;
-	pthread_mutex_t	write;
+	pthread_mutex_t	mutex;
 	bool			quit;
 	size_t			start_time;
 }	t_simulation;

@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:02:25 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/31 08:47:41 by susajid          ###   ########.fr       */
+/*   Updated: 2024/01/31 15:20:11 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,17 @@ static void	check_death(t_simulation *sim)
 		i = 0;
 		while (i < sim->number_of_philo)
 		{
-			pthread_mutex_lock(&sim->write);
+			pthread_mutex_lock(&sim->mutex);
 			if (get_time() - sim->philos[i].last_meal > sim->time_to_die)
 			{
-				pthread_mutex_unlock(&sim->write);
+				pthread_mutex_unlock(&sim->mutex);
 				print(&sim->philos[i], DEAD);
-				pthread_mutex_lock(&sim->write);
+				pthread_mutex_lock(&sim->mutex);
 				sim->quit = true;
-				pthread_mutex_unlock(&sim->write);
+				pthread_mutex_unlock(&sim->mutex);
 				break ;
 			}
-			pthread_mutex_unlock(&sim->write);
+			pthread_mutex_unlock(&sim->mutex);
 			i++;
 		}
 	}
@@ -82,9 +82,8 @@ static void	routine(t_philo *philo)
 		if ((!philo->sim->if_limit || philo->meal_counter
 				< philo->sim->number_of_meals) && eat(philo, fork1, fork2))
 			return ;
-		if (!print(philo, SLEEPING))
+		if (!print(philo, SLEEPING) || (ft_usleep(philo->sim->time_to_sleep), false))
 			return ;
-		ft_usleep(philo->sim->time_to_sleep);
 		if (!print(philo, THINKING))
 			return ;
 	}
@@ -98,9 +97,9 @@ static int	eat(t_philo *philo, pthread_mutex_t *fork1, pthread_mutex_t *fork2)
 	pthread_mutex_lock(fork2);
 	if (!print(philo, TAKEN_FORK))
 		return (pthread_mutex_unlock(fork1), pthread_mutex_unlock(fork2), 2);
-	pthread_mutex_lock(&philo->sim->write);
+	pthread_mutex_lock(&philo->sim->mutex);
 	philo->last_meal = get_time();
-	pthread_mutex_unlock(&philo->sim->write);
+	pthread_mutex_unlock(&philo->sim->mutex);
 	if (!print(philo, EATING))
 		return (pthread_mutex_unlock(fork1), pthread_mutex_unlock(fork2), 3);
 	ft_usleep(philo->sim->time_to_eat);
