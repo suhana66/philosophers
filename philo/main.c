@@ -6,13 +6,12 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:02:25 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/01 10:47:41 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/01 12:19:26 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	check_death(t_simulation *sim);
 static void	routine(t_philo *philo);
 static int	eat(t_philo *philo, pthread_mutex_t *fork1, pthread_mutex_t *fork2);
 
@@ -32,7 +31,10 @@ int	main(int argc, char **argv)
 				(void *(*)(void *))routine, &sim.philos[i]) || (i++, false))
 			return (sim_destroy(&sim), ft_perror(THREAD_CREATE_ERR), 3);
 	}
-	check_death(&sim);
+	i = 0;
+	while (print(&sim.philos[i++], NULL))
+		if (i == sim.number_of_philo)
+			i = 0;
 	i = 0;
 	while (i < sim.number_of_philo)
 		if (pthread_join(sim.philos[i++].thread, NULL))
@@ -40,42 +42,17 @@ int	main(int argc, char **argv)
 	return (sim_destroy(&sim), 0);
 }
 
-static void	check_death(t_simulation *sim)
-{
-	size_t	i;
-
-	while (print(&sim->philos[0], NULL))
-	{
-		i = 0;
-		while (i < sim->number_of_philo)
-		{
-			pthread_mutex_lock(&sim->mutex);
-			if (get_time() - sim->philos[i].last_meal > sim->time_to_die)
-			{
-				pthread_mutex_unlock(&sim->mutex);
-				print(&sim->philos[i], DEAD);
-				pthread_mutex_lock(&sim->mutex);
-				sim->quit = true;
-				pthread_mutex_unlock(&sim->mutex);
-				break ;
-			}
-			pthread_mutex_unlock(&sim->mutex);
-			i++;
-		}
-	}
-}
-
 static void	routine(t_philo *philo)
 {
 	pthread_mutex_t	*fork1;
 	pthread_mutex_t	*fork2;
 
-	fork1 = &philo->sim->philos[0].fork;
-	fork2 = &philo->fork;
-	if (philo->id != philo->sim->number_of_philo)
+	fork1 = &philo->fork;
+	fork2 = &philo->sim->philos[philo->id % philo->sim->number_of_philo].fork;
+	if (philo->id % 2 == 0)
 	{
-		fork1 = &philo->fork;
-		fork2 = &philo->sim->philos[philo->id].fork;
+		fork1 = fork2;
+		fork2 = &philo->fork;
 	}
 	while (print(philo, NULL))
 	{
