@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:02:25 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/31 15:20:11 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/01 10:47:41 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ int	main(int argc, char **argv)
 		sim.philos[i].last_meal = sim.start_time;
 		if (pthread_create(&sim.philos[i].thread, NULL,
 				(void *(*)(void *))routine, &sim.philos[i]) || (i++, false))
-			return (sim_destroy(sim), ft_perror(THREAD_CREATE_ERR), 3);
+			return (sim_destroy(&sim), ft_perror(THREAD_CREATE_ERR), 3);
 	}
 	check_death(&sim);
 	i = 0;
 	while (i < sim.number_of_philo)
 		if (pthread_join(sim.philos[i++].thread, NULL))
-			return (sim_destroy(sim), ft_perror(THREAD_JOIN_ERR), 4);
-	return (sim_destroy(sim), 0);
+			return (sim_destroy(&sim), ft_perror(THREAD_JOIN_ERR), 4);
+	return (sim_destroy(&sim), 0);
 }
 
 static void	check_death(t_simulation *sim)
@@ -82,8 +82,9 @@ static void	routine(t_philo *philo)
 		if ((!philo->sim->if_limit || philo->meal_counter
 				< philo->sim->number_of_meals) && eat(philo, fork1, fork2))
 			return ;
-		if (!print(philo, SLEEPING) || (ft_usleep(philo->sim->time_to_sleep), false))
+		if (!print(philo, SLEEPING))
 			return ;
+		ft_usleep(philo->sim->time_to_sleep);
 		if (!print(philo, THINKING))
 			return ;
 	}

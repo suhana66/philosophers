@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/01/31 13:01:03 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/01 10:08:35 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ static int	philos_init(t_simulation *sim)
 	return (0);
 }
 
-void	sim_destroy(t_simulation sim)
+void	sim_destroy(t_simulation *sim)
 {
 	size_t	i;
 
-	pthread_mutex_destroy(&sim.mutex);
+	pthread_mutex_destroy(&sim->mutex);
 	i = 0;
-	while (i < sim.number_of_philo)
-		pthread_mutex_destroy(&sim.philos[i++].fork);
-	free(sim.philos);
+	while (i < sim->number_of_philo)
+		pthread_mutex_destroy(&sim->philos[i++].fork);
+	free(sim->philos);
 }
