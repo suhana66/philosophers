@@ -5,66 +5,73 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 15:54:45 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/01 10:08:06 by susajid          ###   ########.fr       */
+/*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
+/*   Updated: 2024/02/09 11:20:40 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdbool.h>
 # include <pthread.h>
 # include <stdio.h>
+# include <stdlib.h>
 # include <sys/time.h>
+# include <unistd.h>
 
-# define USAGE_ERR "usage: ./philo <number_of_philo> <time_to_die> <time_to_eat> \
-<time_to_sleep> [number_of_meals]"
+# define USAGE_ERR "usage: ./philo <n_philo> <t_die> <t_eat> <t_sleep> [n_meal]"
 # define INVALID_ARGS_ERR "an invalid argument was entered"
+# define MUTEX_INIT_ERR "could not initialize mutex"
+# define MALLOC_ERR "a memory allocation error occurred"
 # define THREAD_CREATE_ERR "could not create thread"
 # define THREAD_JOIN_ERR "could not join thread"
-# define MALLOC_ERR "a memory allocation error occurred"
-# define MUTEX_INIT_ERR "could not initialize mutex"
-# define GET_TIME_ERR "could not access time"
 
 # define TAKEN_FORK "has taken a fork"
-# define THINKING "is thinking"
-# define SLEEPING "is sleeping"
 # define EATING "is eating"
+# define SLEEPING "is sleeping"
+# define THINKING "is thinking"
 # define DEAD "died"
 
 typedef struct s_simulation
 {
-	size_t			number_of_philo;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
-	size_t			number_of_meals;
-	bool			if_limit;
+	unsigned int	n_philo;
+	unsigned int	t_die;
+	unsigned int	t_eat;
+	unsigned int	t_sleep;
+	unsigned int	n_meal;
+	int				if_limit;
+	int				if_quit;
+	pthread_mutex_t	dead_lock;
+	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	write_lock;
 	struct s_philo	*philos;
-	pthread_mutex_t	mutex;
-	bool			quit;
 	size_t			start_time;
-}	t_simulation;
+}					t_simulation;
 
 typedef struct s_philo
 {
-	size_t				id;
+	unsigned int		id;
+	pthread_t			thread;
 	struct s_simulation	*sim;
 	pthread_mutex_t		fork;
-	pthread_t			thread;
+	unsigned int		meal_counter;
 	size_t				last_meal;
-	size_t				meal_counter;
-}	t_philo;
+}						t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
+int		str_to_unsigned(char *str, unsigned int *result);
+int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
 
+void	routine(t_philo *philo);
+int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
+void	print(t_philo *philo, char *action);
+int		sim_quit(t_simulation *sim);
+
+int		check_quit(t_philo *philo);
+int		check_last_meal(t_philo *philo);
 void	ft_perror(char *msg);
 void	ft_usleep(size_t milliseconds);
 size_t	get_time(void);
-bool	print(t_philo *philo, char *action);
 
 #endif /* PHILO_H */

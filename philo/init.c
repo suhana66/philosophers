@@ -5,41 +5,43 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/25 08:50:29 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/01 10:08:35 by susajid          ###   ########.fr       */
+/*   Created: 2024/02/05 10:20:34 by susajid           #+#    #+#             */
+/*   Updated: 2024/02/09 11:20:47 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	str_to_unsigned(char *str, size_t *result);
-static int	philos_init(t_simulation *sim);
-
 int	sim_init(t_simulation *sim, int argc, char **argv)
 {
 	if (argc != 4 && argc != 5)
 		return (ft_perror(USAGE_ERR), 1);
-	sim->quit = false;
-	sim->if_limit = (argc == 5);
-	if (str_to_unsigned(argv[0], &sim->number_of_philo)
-		|| sim->number_of_philo == 0
-		|| str_to_unsigned(argv[1], &sim->time_to_die)
-		|| str_to_unsigned(argv[2], &sim->time_to_eat)
-		|| str_to_unsigned(argv[3], &sim->time_to_sleep)
-		|| (sim->if_limit && str_to_unsigned(argv[4], &sim->number_of_meals)))
+	if (str_to_unsigned(argv[0], &sim->n_philo) || !sim->n_philo
+		|| str_to_unsigned(argv[1], &sim->t_die)
+		|| str_to_unsigned(argv[2], &sim->t_eat)
+		|| str_to_unsigned(argv[3], &sim->t_sleep)
+		|| (argc == 5 && str_to_unsigned(argv[4], &sim->n_meal)))
 		return (ft_perror(INVALID_ARGS_ERR), 2);
-	if (pthread_mutex_init(&sim->mutex, NULL))
+	sim->if_quit = 0;
+	sim->if_limit = (argc == 5);
+	if (pthread_mutex_init(&sim->write_lock, NULL))
 		return (ft_perror(MUTEX_INIT_ERR), 3);
+	if (pthread_mutex_init(&sim->dead_lock, NULL))
+		return (pthread_mutex_destroy(&sim->write_lock),
+			ft_perror(MUTEX_INIT_ERR), 4);
+	if (pthread_mutex_init(&sim->meal_lock, NULL))
+		return (pthread_mutex_destroy(&sim->write_lock),
+			pthread_mutex_destroy(&sim->dead_lock),
+			ft_perror(MUTEX_INIT_ERR), 5);
 	if (philos_init(sim))
-		return (pthread_mutex_destroy(&sim->mutex), 4);
+		return (pthread_mutex_destroy(&sim->write_lock),
+			pthread_mutex_destroy(&sim->dead_lock),
+			pthread_mutex_destroy(&sim->meal_lock),
+			ft_perror(MUTEX_INIT_ERR), 6);
 	return (0);
 }
 
-/*
-	whitespace characters: '\t', '\n', '\v', '\f', '\r', ' '
-					ascii: 9, 10, 11, 12, 13, 32
-*/
-static int	str_to_unsigned(char *str, size_t *result)
+int	str_to_unsigned(char *str, unsigned int *result)
 {
 	size_t	prev_res;
 
@@ -64,15 +66,15 @@ static int	str_to_unsigned(char *str, size_t *result)
 	return (0);
 }
 
-static int	philos_init(t_simulation *sim)
+int	philos_init(t_simulation *sim)
 {
 	size_t	i;
 
-	sim->philos = malloc(sizeof(t_philo) * sim->number_of_philo);
+	sim->philos = malloc(sizeof(t_philo) * sim->n_philo);
 	if (!sim->philos)
 		return (ft_perror(MALLOC_ERR), 1);
 	i = 0;
-	while (i < sim->number_of_philo)
+	while (i < sim->n_philo)
 	{
 		sim->philos[i].id = i + 1;
 		sim->philos[i].sim = sim;
@@ -90,11 +92,13 @@ static int	philos_init(t_simulation *sim)
 
 void	sim_destroy(t_simulation *sim)
 {
-	size_t	i;
+	unsigned int	i;
 
-	pthread_mutex_destroy(&sim->mutex);
 	i = 0;
-	while (i < sim->number_of_philo)
+	pthread_mutex_destroy(&sim->write_lock);
+	pthread_mutex_destroy(&sim->meal_lock);
+	pthread_mutex_destroy(&sim->dead_lock);
+	while (i < sim->n_philo)
 		pthread_mutex_destroy(&sim->philos[i++].fork);
 	free(sim->philos);
 }
