@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:34 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/09 11:20:47 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/11 16:20:06 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,12 @@ int	philos_init(t_simulation *sim)
 		sim->philos[i].meal_counter = 0;
 		if (pthread_mutex_init(&sim->philos[i].fork, NULL))
 		{
-			while (--i >= 0)
-				pthread_mutex_destroy(&sim->philos[i].fork);
+			while (1)
+			{
+				pthread_mutex_destroy(&sim->philos[--i].fork);
+				if (i == 0)
+					break ;
+			}
 			return (free(sim->philos), ft_perror(MUTEX_INIT_ERR), 2);
 		}
 		i++;
