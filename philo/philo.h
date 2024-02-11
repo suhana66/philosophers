@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/09 11:20:40 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/11 17:07:35 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,11 @@ typedef struct s_philo
 }						t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
-int		str_to_unsigned(char *str, unsigned int *result);
+int		str_to_natural(char *str, unsigned int *result);
 int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
 
-void	routine(t_philo *philo);
+void	*routine(t_philo *philo);
 int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
 void	print(t_philo *philo, char *action);
 int		sim_quit(t_simulation *sim);

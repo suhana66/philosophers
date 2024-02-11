@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/09 11:20:43 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/11 16:24:22 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int argc, char **argv)
 	return (sim_destroy(&sim), 0);
 }
 
-void	routine(t_philo *philo)
+void	*routine(t_philo *philo)
 {
 	pthread_mutex_t	*fork1;
 	pthread_mutex_t	*fork2;
@@ -49,11 +49,12 @@ void	routine(t_philo *philo)
 	while (!check_quit(philo))
 	{
 		if (eat(philo, fork1, fork2))
-			return ;
+			break ;
 		print(philo, SLEEPING);
 		ft_usleep(philo->sim->t_sleep);
 		print(philo, THINKING);
 	}
+	return (NULL);
 }
 
 int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
