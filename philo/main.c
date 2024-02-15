@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/11 16:24:22 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/15 10:38:43 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	pthread_mutex_lock(fork1);
 	print(philo, TAKEN_FORK);
 	if (fork1 == fork2)
-		return (1);
+		return (pthread_mutex_unlock(fork1), 1);
 	pthread_mutex_lock(fork2);
 	print(philo, TAKEN_FORK);
 	print(philo, EATING);
