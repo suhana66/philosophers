@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/15 10:38:43 by susajid          ###   ########.fr       */
+/*   Updated: 2024/02/15 10:41:45 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 
 void	print(t_philo *philo, char *action)
 {
-	if (check_quit(philo))
-		return ;
 	pthread_mutex_lock(&philo->sim->write_lock);
+	if (check_quit(philo))
+		return ((void)pthread_mutex_unlock(&philo->sim->write_lock));
 	printf("%zu %d %s\n", get_time() - philo->sim->start_time,
 		philo->id, action);
 	pthread_mutex_unlock(&philo->sim->write_lock);
