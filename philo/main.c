@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/15 10:41:45 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 16:03:53 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	*routine(t_philo *philo)
 	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
 	if (philo->id % 2 == 0)
 		ft_usleep(1);
-	while (!check_quit(philo))
+	while (!check_quit(philo->sim))
 	{
 		if (eat(philo, fork1, fork2))
 			break ;
@@ -81,7 +81,7 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 void	print(t_philo *philo, char *action)
 {
 	pthread_mutex_lock(&philo->sim->write_lock);
-	if (check_quit(philo))
+	if (check_quit(philo->sim))
 		return ((void)pthread_mutex_unlock(&philo->sim->write_lock));
 	printf("%zu %d %s\n", get_time() - philo->sim->start_time,
 		philo->id, action);

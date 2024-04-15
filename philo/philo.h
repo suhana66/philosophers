@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/11 17:07:35 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 16:06:23 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
 void	print(t_philo *philo, char *action);
 int		sim_quit(t_simulation *sim);
 
-int		check_quit(t_philo *philo);
+int		check_quit(t_simulation *sim);
 int		check_last_meal(t_philo *philo);
 void	ft_perror(char *msg);
 void	ft_usleep(size_t milliseconds);

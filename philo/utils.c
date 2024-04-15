@@ -6,18 +6,18 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:21:11 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/09 11:19:12 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 16:04:30 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	check_quit(t_philo *philo)
+int	check_quit(t_simulation *sim)
 {
-	pthread_mutex_lock(&philo->sim->dead_lock);
-	if (philo->sim->if_quit)
-		return (pthread_mutex_unlock(&philo->sim->dead_lock), 1);
-	pthread_mutex_unlock(&philo->sim->dead_lock);
+	pthread_mutex_lock(&sim->dead_lock);
+	if (sim->if_quit)
+		return (pthread_mutex_unlock(&sim->dead_lock), 1);
+	pthread_mutex_unlock(&sim->dead_lock);
 	return (0);
 }
 
