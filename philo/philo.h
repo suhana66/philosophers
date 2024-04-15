@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 16:06:23 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 17:18:44 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ int		sim_quit(t_simulation *sim);
 
 int		check_quit(t_simulation *sim);
 int		check_last_meal(t_philo *philo);
-void	ft_perror(char *msg);
-void	ft_usleep(size_t milliseconds);
+void	philo_sleep(size_t milliseconds, t_simulation *sim);
 size_t	get_time(void);
+void	ft_perror(char *msg);
 
 #endif /* PHILO_H */

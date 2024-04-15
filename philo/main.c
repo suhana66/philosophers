@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 16:03:53 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 16:49:45 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	main(int argc, char **argv)
 			return (ft_perror(THREAD_CREATE_ERR), sim_destroy(&sim), 2);
 	}
 	while (!sim_quit(&sim))
-		ft_usleep(1);
+		philo_sleep(1, &sim);
 	i = 0;
 	while (i < sim.n_philo)
 		if (pthread_join(sim.philos[i++].thread, NULL))
@@ -45,13 +45,13 @@ void	*routine(t_philo *philo)
 	fork1 = &philo->fork;
 	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		philo_sleep(1, philo->sim);
 	while (!check_quit(philo->sim))
 	{
 		if (eat(philo, fork1, fork2))
 			break ;
 		print(philo, SLEEPING);
-		ft_usleep(philo->sim->t_sleep);
+		philo_sleep(philo->sim->t_sleep, philo->sim);
 		print(philo, THINKING);
 	}
 	return (NULL);
@@ -69,7 +69,7 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->sim->meal_lock);
-	ft_usleep(philo->sim->t_eat);
+	philo_sleep(philo->sim->t_eat, philo->sim);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->meal_counter++;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
