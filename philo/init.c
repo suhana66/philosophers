@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:34 by susajid           #+#    #+#             */
-/*   Updated: 2024/02/11 17:12:50 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 20:14:15 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,11 @@ int	philos_init(t_simulation *sim)
 		sim->philos[i].id = i + 1;
 		sim->philos[i].sim = sim;
 		sim->philos[i].meal_counter = 0;
-		if (pthread_mutex_init(&sim->philos[i].fork, NULL))
+		sim->philos[i].fork.value = 0;
+		if (pthread_mutex_init(&sim->philos[i].fork.mutex, NULL))
 		{
-			while (1)
-			{
-				pthread_mutex_destroy(&sim->philos[--i].fork);
-				if (i == 0)
-					break ;
-			}
+			while (i > 0)
+				pthread_mutex_destroy(&sim->philos[--i].fork.mutex);
 			return (free(sim->philos), ft_perror(MUTEX_INIT_ERR), 2);
 		}
 		i++;
@@ -105,6 +102,6 @@ void	sim_destroy(t_simulation *sim)
 	pthread_mutex_destroy(&sim->meal_lock);
 	pthread_mutex_destroy(&sim->dead_lock);
 	while (i < sim->n_philo)
-		pthread_mutex_destroy(&sim->philos[i++].fork);
+		pthread_mutex_destroy(&sim->philos[i++].fork.mutex);
 	free(sim->philos);
 }

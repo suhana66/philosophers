@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 16:49:45 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 20:02:15 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ int	main(int argc, char **argv)
 
 void	*routine(t_philo *philo)
 {
-	pthread_mutex_t	*fork1;
-	pthread_mutex_t	*fork2;
+	t_fork	*fork1;
+	t_fork	*fork2;
 
 	fork1 = &philo->fork;
 	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
@@ -57,13 +57,13 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
-int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
+int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 {
-	pthread_mutex_lock(fork1);
+	pthread_mutex_lock(&fork1->mutex);
 	print(philo, TAKEN_FORK);
 	if (fork1 == fork2)
-		return (pthread_mutex_unlock(fork1), 1);
-	pthread_mutex_lock(fork2);
+		return (pthread_mutex_unlock(&fork1->mutex), 1);
+	pthread_mutex_lock(&fork2->mutex);
 	print(philo, TAKEN_FORK);
 	print(philo, EATING);
 	pthread_mutex_lock(&philo->sim->meal_lock);
@@ -73,8 +73,8 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->meal_counter++;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
-	pthread_mutex_unlock(fork1);
-	pthread_mutex_unlock(fork2);
+	pthread_mutex_unlock(&fork1->mutex);
+	pthread_mutex_unlock(&fork2->mutex);
 	return (0);
 }
 

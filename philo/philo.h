@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 17:18:44 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/15 20:01:01 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,18 @@ typedef struct s_simulation
 	size_t			start_time;
 }					t_simulation;
 
+typedef struct s_fork
+{
+	pthread_mutex_t	mutex;
+	unsigned int	value;
+}					t_fork;
+
 typedef struct s_philo
 {
 	unsigned int		id;
 	pthread_t			thread;
 	struct s_simulation	*sim;
-	pthread_mutex_t		fork;
+	struct s_fork		fork;
 	unsigned int		meal_counter;
 	size_t				last_meal;
 }						t_philo;
@@ -64,7 +70,7 @@ int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
 
 void	*routine(t_philo *philo);
-int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
+int		eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2);
 void	print(t_philo *philo, char *action);
 int		sim_quit(t_simulation *sim);
 
