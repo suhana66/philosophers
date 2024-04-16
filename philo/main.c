@@ -42,10 +42,14 @@ void	*routine(t_philo *philo)
 	t_fork	*fork1;
 	t_fork	*fork2;
 
-	fork1 = &philo->fork;
-	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
-	if (philo->id % 2 == 0)
-		philo_sleep(1, philo->sim);
+	if (philo->id % 2)
+		fork1 = &philo->fork;
+	else
+		fork1 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
+	if (philo->id % 2)
+		fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
+	else
+		fork2 = &philo->fork;
 	while (!check_quit(philo->sim))
 	{
 		if (eat(philo, fork1, fork2))
@@ -59,16 +63,36 @@ void	*routine(t_philo *philo)
 
 int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 {
-	pthread_mutex_lock(&fork1->mutex);
-	print(philo, TAKEN_FORK);
 	if (fork1 == fork2)
-		return (pthread_mutex_unlock(&fork1->mutex), 1);
-	pthread_mutex_lock(&fork2->mutex);
-	print(philo, TAKEN_FORK);
-	print(philo, EATING);
+		return (print(philo, TAKEN_FORK), 1);
+	while (1)
+	{
+		pthread_mutex_lock(&fork1->mutex);
+		if (philo->id == fork1->value)
+		{
+			pthread_mutex_unlock(&fork1->mutex);
+			continue ;
+		}
+		fork1->value = philo->id;
+		print(philo, TAKEN_FORK);
+		break ;
+	}
+	while (1)
+	{
+		pthread_mutex_lock(&fork2->mutex);
+		if (philo->id == fork2->value)
+		{
+			pthread_mutex_unlock(&fork2->mutex);
+			continue ;
+		}
+		fork2->value = philo->id;
+		print(philo, TAKEN_FORK);
+		break ;
+	}
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->sim->meal_lock);
+	print(philo, EATING);
 	philo_sleep(philo->sim->t_eat, philo->sim);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->meal_counter++;
