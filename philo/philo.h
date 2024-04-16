@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:47 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 20:01:01 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/16 11:44:20 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,12 @@ int		sim_init(t_simulation *sim, int argc, char **argv);
 int		str_to_natural(char *str, unsigned int *result);
 int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
+int		sim_quit(t_simulation *sim);
 
 void	*routine(t_philo *philo);
 int		eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2);
+void	pick_fork(t_philo *philo, t_fork *fork);
 void	print(t_philo *philo, char *action);
-int		sim_quit(t_simulation *sim);
 
 int		check_quit(t_simulation *sim);
 int		check_last_meal(t_philo *philo);

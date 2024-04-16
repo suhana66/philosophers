@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:38 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 20:02:15 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/16 11:45:13 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,30 +65,8 @@ int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 {
 	if (fork1 == fork2)
 		return (print(philo, TAKEN_FORK), 1);
-	while (1)
-	{
-		pthread_mutex_lock(&fork1->mutex);
-		if (philo->id == fork1->value)
-		{
-			pthread_mutex_unlock(&fork1->mutex);
-			continue ;
-		}
-		fork1->value = philo->id;
-		print(philo, TAKEN_FORK);
-		break ;
-	}
-	while (1)
-	{
-		pthread_mutex_lock(&fork2->mutex);
-		if (philo->id == fork2->value)
-		{
-			pthread_mutex_unlock(&fork2->mutex);
-			continue ;
-		}
-		fork2->value = philo->id;
-		print(philo, TAKEN_FORK);
-		break ;
-	}
+	pick_fork(philo, fork1);
+	pick_fork(philo, fork2);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
 	philo->eating = 1;
@@ -104,6 +82,22 @@ int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 	return (0);
 }
 
+void	pick_fork(t_philo *philo, t_fork *fork)
+{
+	while (1)
+	{
+		pthread_mutex_lock(&fork->mutex);
+		if (philo->id == fork->value)
+		{
+			pthread_mutex_unlock(&fork->mutex);
+			continue ;
+		}
+		fork->value = philo->id;
+		print(philo, TAKEN_FORK);
+		break ;
+	}
+}
+
 void	print(t_philo *philo, char *action)
 {
 	pthread_mutex_lock(&philo->sim->write_lock);
@@ -112,33 +106,4 @@ void	print(t_philo *philo, char *action)
 	printf("%zu %d %s\n", get_time() - philo->sim->start_time,
 		philo->id, action);
 	pthread_mutex_unlock(&philo->sim->write_lock);
-}
-
-int	sim_quit(t_simulation *sim)
-{
-	unsigned int	i;
-	unsigned int	satisfied_philos;
-	int				if_dead;
-
-	i = 0;
-	satisfied_philos = 0;
-	if_dead = 0;
-	while (++i <= sim->n_philo)
-	{
-		if_dead = check_last_meal(&sim->philos[i - 1]);
-		if (if_dead || (pthread_mutex_lock(&sim->meal_lock), 0))
-			break ;
-		if (sim->if_limit && sim->philos[i - 1].meal_counter >= sim->n_meal)
-			satisfied_philos++;
-		pthread_mutex_unlock(&sim->meal_lock);
-	}
-	if (if_dead)
-		print(&sim->philos[i - 1], DEAD);
-	if (if_dead || (sim->if_limit && satisfied_philos == sim->n_philo))
-	{
-		pthread_mutex_lock(&sim->dead_lock);
-		sim->if_quit = 1;
-		return (pthread_mutex_unlock(&sim->dead_lock), 1);
-	}
-	return (0);
 }

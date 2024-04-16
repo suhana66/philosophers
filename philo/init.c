@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:20:34 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 20:14:15 by susajid          ###   ########.fr       */
+/*   Updated: 2024/04/16 10:57:11 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,4 +105,33 @@ void	sim_destroy(t_simulation *sim)
 	while (i < sim->n_philo)
 		pthread_mutex_destroy(&sim->philos[i++].fork.mutex);
 	free(sim->philos);
+}
+
+int	sim_quit(t_simulation *sim)
+{
+	unsigned int	i;
+	unsigned int	satisfied_philos;
+	int				if_dead;
+
+	i = 0;
+	satisfied_philos = 0;
+	if_dead = 0;
+	while (++i <= sim->n_philo)
+	{
+		if_dead = check_last_meal(&sim->philos[i - 1]);
+		if (if_dead || (pthread_mutex_lock(&sim->meal_lock), 0))
+			break ;
+		if (sim->if_limit && sim->philos[i - 1].meal_counter >= sim->n_meal)
+			satisfied_philos++;
+		pthread_mutex_unlock(&sim->meal_lock);
+	}
+	if (if_dead)
+		print(&sim->philos[i - 1], DEAD);
+	if (if_dead || (sim->if_limit && satisfied_philos == sim->n_philo))
+	{
+		pthread_mutex_lock(&sim->dead_lock);
+		sim->if_quit = 1;
+		return (pthread_mutex_unlock(&sim->dead_lock), 1);
+	}
+	return (0);
 }
