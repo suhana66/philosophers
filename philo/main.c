@@ -91,11 +91,13 @@ int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 	}
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
+	philo->eating = 1;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
 	print(philo, EATING);
 	philo_sleep(philo->sim->t_eat, philo->sim);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->meal_counter++;
+	philo->eating = 0;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
 	pthread_mutex_unlock(&fork1->mutex);
 	pthread_mutex_unlock(&fork2->mutex);

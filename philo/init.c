@@ -79,6 +79,7 @@ int	philos_init(t_simulation *sim)
 	while (i < sim->n_philo)
 	{
 		sim->philos[i].id = i + 1;
+		sim->philos[i].eating = 0;
 		sim->philos[i].sim = sim;
 		sim->philos[i].meal_counter = 0;
 		sim->philos[i].fork.value = 0;

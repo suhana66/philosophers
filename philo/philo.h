@@ -57,6 +57,7 @@ typedef struct s_fork
 typedef struct s_philo
 {
 	unsigned int		id;
+	int					eating;
 	pthread_t			thread;
 	struct s_simulation	*sim;
 	struct s_fork		fork;
