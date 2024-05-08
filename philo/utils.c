@@ -6,7 +6,7 @@
 /*   By: susajid <susajid@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 10:21:11 by susajid           #+#    #+#             */
-/*   Updated: 2024/04/15 16:45:59 by susajid          ###   ########.fr       */
+/*   Updated: 2024/05/08 13:20:59 by susajid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	check_last_meal(t_philo *philo)
 	return (0);
 }
 
-void	philo_sleep(size_t milliseconds, t_simulation *sim)
+void	do_sleep(size_t milliseconds, t_simulation *sim)
 {
 	size_t	start;
 
