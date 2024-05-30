@@ -41,11 +41,11 @@ typedef struct s_simulation
 	unsigned int	n_meal;
 	int				if_limit;
 	int				if_quit;
+	size_t			start_time;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
 	pthread_mutex_t	write_lock;
 	struct s_philo	*philos;
-	size_t			start_time;
 }					t_simulation;
 
 typedef struct s_fork
@@ -57,12 +57,13 @@ typedef struct s_fork
 typedef struct s_philo
 {
 	unsigned int		id;
-	int					eating;
 	pthread_t			thread;
 	struct s_simulation	*sim;
-	struct s_fork		fork;
-	unsigned int		meal_counter;
+	int					eating;
+	size_t				start_time;
 	size_t				last_meal;
+	unsigned int		meal_counter;
+	struct s_fork		fork;
 }						t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
