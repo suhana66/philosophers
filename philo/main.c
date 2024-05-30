@@ -19,14 +19,15 @@ int	main(int argc, char **argv)
 
 	if (sim_init(&sim, argc - 1, &argv[1]))
 		return (1);
-	sim.start_time = get_time();
 	i = 0;
+	sim.start_time = get_time();
 	while (i < sim.n_philo)
 	{
-		sim.philos[i].last_meal = get_time();
+		// delete all previousley created threads
 		if (pthread_create(&sim.philos[i].thread, NULL,
-				(void *(*)(void *))routine, &sim.philos[i]) || !++i)
+				(void *(*)(void *))routine, &sim.philos[i]))
 			return (ft_perror(THREAD_CREATE_ERR), sim_destroy(&sim), 2);
+		i++;
 	}
 	while (!sim_quit(&sim))
 		do_sleep(1, &sim);
@@ -42,15 +43,13 @@ void	*routine(t_philo *philo)
 	pthread_mutex_t	*fork1;
 	pthread_mutex_t	*fork2;
 
-	if (philo->id % 2)
+	fork1 = &philo->fork;
+	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
+	if (philo->id % 2 == 0)
 	{
-		fork1 = &philo->fork;
-		fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
-	}
-	else
-	{
-		fork1 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
+		fork1 = fork2;
 		fork2 = &philo->fork;
+		do_sleep(philo->sim->t_eat, philo->sim);
 	}
 	while (!check_quit(philo->sim))
 	{
@@ -59,6 +58,15 @@ void	*routine(t_philo *philo)
 		print(philo, SLEEPING);
 		do_sleep(philo->sim->t_sleep, philo->sim);
 		print(philo, THINKING);
+		pthread_mutex_lock(&philo->sim->meal_lock);
+		if (philo->sim->if_limit && philo->meal_counter == philo->sim->n_meal)
+		{
+			pthread_mutex_unlock(&philo->sim->meal_lock);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->sim->meal_lock);
+		if (philo->sim->n_philo % 2 != 0)
+			do_sleep(2, philo->sim);
 	}
 	return (NULL);
 }
@@ -67,35 +75,32 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 {
 	if (fork1 == fork2)
 		return (print(philo, TAKEN_FORK), 1);
-	pick_fork(philo, fork1);
-	pick_fork(philo, fork2);
+	pthread_mutex_lock(fork1);
+	pthread_mutex_lock(fork2);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
+	philo->meal_counter++;
 	philo->eating = 1;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
+	print(philo, TAKEN_FORK);
+	print(philo, TAKEN_FORK);
 	print(philo, EATING);
 	do_sleep(philo->sim->t_eat, philo->sim);
-	pthread_mutex_lock(&philo->sim->meal_lock);
-	philo->meal_counter++;
-	philo->eating = 0;
-	pthread_mutex_unlock(&philo->sim->meal_lock);
 	pthread_mutex_unlock(fork1);
 	pthread_mutex_unlock(fork2);
+	pthread_mutex_lock(&philo->sim->meal_lock);
+	philo->eating = 0;
+	pthread_mutex_unlock(&philo->sim->meal_lock);
 	return (0);
-}
-
-void	pick_fork(t_philo *philo, pthread_mutex_t *fork)
-{
-	pthread_mutex_lock(fork);
-	print(philo, TAKEN_FORK);
 }
 
 void	print(t_philo *philo, char *action)
 {
 	pthread_mutex_lock(&philo->sim->write_lock);
-	if (check_quit(philo->sim))
-		return ((void)pthread_mutex_unlock(&philo->sim->write_lock));
-	printf("%zu %d %s\n", get_time() - philo->sim->start_time,
-		philo->id, action);
+	if (!check_quit(philo->sim))
+	{
+		printf("%zu %d %s\n", get_time() - philo->sim->start_time,
+			philo->id, action);
+	}
 	pthread_mutex_unlock(&philo->sim->write_lock);
 }

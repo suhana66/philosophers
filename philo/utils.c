@@ -35,7 +35,7 @@ void	do_sleep(size_t milliseconds, t_simulation *sim)
 	size_t	start;
 
 	start = get_time();
-	while (!check_quit(sim) && get_time() - start < milliseconds)
+	while (get_time() - start < milliseconds && !check_quit(sim))
 		usleep(500);
 }
 
