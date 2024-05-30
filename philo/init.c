@@ -18,6 +18,7 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 		return (ft_perror(USAGE_ERR), 1);
 	sim->if_quit = 0;
 	sim->n_meal = 0;
+	sim->satisfied = 0;
 	if (str_to_natural(argv[0], &sim->n_philo)
 		|| str_to_natural(argv[1], &sim->t_die)
 		|| str_to_natural(argv[2], &sim->t_eat)
@@ -111,7 +112,7 @@ void	sim_monitor(t_simulation *sim)
 	while (1)
 	{
 		usleep(1000);
-		if (philos_finished(sim) || philos_dead(sim))
+		if (philos_dead(sim))
 			break ;
 	}
 }

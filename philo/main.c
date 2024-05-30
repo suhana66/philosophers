@@ -58,13 +58,6 @@ void	*routine(t_philo *philo)
 		print(philo, SLEEPING);
 		do_sleep(philo->sim->t_sleep, philo->sim);
 		print(philo, THINKING);
-		pthread_mutex_lock(&philo->sim->meal_lock);
-		if (philo->sim->n_meal && philo->meal_counter == philo->sim->n_meal)
-		{
-			pthread_mutex_unlock(&philo->sim->meal_lock);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->sim->meal_lock);
 		if (philo->sim->n_philo % 2 != 0)
 			do_sleep(2, philo->sim);
 	}
@@ -79,7 +72,6 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	pthread_mutex_lock(fork2);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->last_meal = get_time();
-	philo->meal_counter++;
 	philo->eating = 1;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
 	print(philo, TAKEN_FORK);
@@ -90,6 +82,11 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	pthread_mutex_unlock(fork2);
 	pthread_mutex_lock(&philo->sim->meal_lock);
 	philo->eating = 0;
+	philo->meal_counter++;
+	if (philo->meal_counter == philo->sim->n_meal)
+		philo->sim->satisfied++;
+	if (philo->sim->satisfied == philo->sim->n_philo)
+		return (sim_quit(philo->sim), pthread_mutex_unlock(&philo->sim->meal_lock), 2);
 	pthread_mutex_unlock(&philo->sim->meal_lock);
 	return (0);
 }
