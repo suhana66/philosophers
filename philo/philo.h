@@ -43,9 +43,7 @@ typedef struct s_simulation
 	unsigned int	satisfied;
 	int				if_quit;
 	size_t			start_time;
-	pthread_mutex_t	dead_lock;
-	pthread_mutex_t	meal_lock;
-	pthread_mutex_t	write_lock;
+	pthread_mutex_t	mutex;
 	struct s_philo	*philos;
 }					t_simulation;
 
@@ -67,9 +65,8 @@ void	sim_monitor(t_simulation *sim);
 
 void	*routine(t_philo *philo);
 int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
-void	print(t_philo *philo, char *action);
+void	print(t_philo *philo, char *action, int if_lock);
 
-void	sim_quit(t_simulation *sim);
 int		check_quit(t_simulation *sim);
 void	do_sleep(size_t milliseconds, t_simulation *sim);
 size_t	get_time(void);

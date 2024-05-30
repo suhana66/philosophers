@@ -25,20 +25,10 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 		|| str_to_natural(argv[3], &sim->t_sleep)
 		|| (argc == 5 && str_to_natural(argv[4], &sim->n_meal)))
 		return (ft_perror(INVALID_ARGS_ERR), 2);
-	if (pthread_mutex_init(&sim->write_lock, NULL))
+	if (pthread_mutex_init(&sim->mutex, NULL))
 		return (ft_perror(MUTEX_INIT_ERR), 3);
-	if (pthread_mutex_init(&sim->dead_lock, NULL))
-		return (pthread_mutex_destroy(&sim->write_lock),
-			ft_perror(MUTEX_INIT_ERR), 4);
-	if (pthread_mutex_init(&sim->meal_lock, NULL))
-		return (pthread_mutex_destroy(&sim->write_lock),
-			pthread_mutex_destroy(&sim->dead_lock),
-			ft_perror(MUTEX_INIT_ERR), 5);
 	if (philos_init(sim))
-		return (pthread_mutex_destroy(&sim->write_lock),
-			pthread_mutex_destroy(&sim->dead_lock),
-			pthread_mutex_destroy(&sim->meal_lock),
-			ft_perror(MUTEX_INIT_ERR), 6);
+		return (pthread_mutex_destroy(&sim->mutex), 4);
 	return (0);
 }
 
@@ -98,9 +88,7 @@ void	sim_destroy(t_simulation *sim)
 	unsigned int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&sim->write_lock);
-	pthread_mutex_destroy(&sim->meal_lock);
-	pthread_mutex_destroy(&sim->dead_lock);
+	pthread_mutex_destroy(&sim->mutex);
 	while (i < sim->n_philo)
 		pthread_mutex_destroy(&sim->philos[i++].fork);
 	free(sim->philos);
@@ -116,15 +104,15 @@ void	sim_monitor(t_simulation *sim)
 		i = 0;
 		while (i < sim->n_philo)
 		{
-			pthread_mutex_lock(&sim->meal_lock);
+			pthread_mutex_lock(&sim->mutex);
 			if (get_time() - sim->philos[i].last_meal > sim->t_die)
 			{
-				print(&sim->philos[i], DEAD);
-				sim_quit(sim);
+				print(&sim->philos[i], DEAD, 0);
+				sim->if_quit = 1;
 			}
-			if (check_quit(sim))
-				return ((void)pthread_mutex_unlock(&sim->meal_lock));
-			pthread_mutex_unlock(&sim->meal_lock);
+			if (sim->if_quit)
+				return ((void)pthread_mutex_unlock(&sim->mutex));
+			pthread_mutex_unlock(&sim->mutex);
 			i++;
 		}
 	}

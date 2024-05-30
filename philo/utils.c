@@ -12,19 +12,12 @@
 
 #include "philo.h"
 
-void	sim_quit(t_simulation *sim)
-{
-	pthread_mutex_lock(&sim->dead_lock);
-	sim->if_quit = 1;
-	pthread_mutex_unlock(&sim->dead_lock);
-}
-
 int	check_quit(t_simulation *sim)
 {
-	pthread_mutex_lock(&sim->dead_lock);
+	pthread_mutex_lock(&sim->mutex);
 	if (sim->if_quit)
-		return (pthread_mutex_unlock(&sim->dead_lock), 1);
-	pthread_mutex_unlock(&sim->dead_lock);
+		return (pthread_mutex_unlock(&sim->mutex), 1);
+	pthread_mutex_unlock(&sim->mutex);
 	return (0);
 }
 
