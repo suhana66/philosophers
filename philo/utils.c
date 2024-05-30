@@ -12,21 +12,19 @@
 
 #include "philo.h"
 
+void	sim_quit(t_simulation *sim)
+{
+	pthread_mutex_lock(&sim->dead_lock);
+	sim->if_quit = 1;
+	pthread_mutex_unlock(&sim->dead_lock);
+}
+
 int	check_quit(t_simulation *sim)
 {
 	pthread_mutex_lock(&sim->dead_lock);
 	if (sim->if_quit)
 		return (pthread_mutex_unlock(&sim->dead_lock), 1);
 	pthread_mutex_unlock(&sim->dead_lock);
-	return (0);
-}
-
-int	check_last_meal(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->sim->meal_lock);
-	if (get_time() - philo->last_meal >= philo->sim->t_die && !philo->eating)
-		return (pthread_mutex_unlock(&philo->sim->meal_lock), 1);
-	pthread_mutex_unlock(&philo->sim->meal_lock);
 	return (0);
 }
 

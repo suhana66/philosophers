@@ -65,17 +65,13 @@ int		str_to_natural(char *str, unsigned int *result);
 int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
 void	sim_monitor(t_simulation *sim);
-int		philos_finished(t_simulation *sim);
-int		philos_dead(t_simulation *sim);
-void	sim_quit(t_simulation *sim);
 
 void	*routine(t_philo *philo);
 int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
-void	pick_fork(t_philo *philo, pthread_mutex_t *fork);
 void	print(t_philo *philo, char *action);
 
+void	sim_quit(t_simulation *sim);
 int		check_quit(t_simulation *sim);
-int		check_last_meal(t_philo *philo);
 void	do_sleep(size_t milliseconds, t_simulation *sim);
 size_t	get_time(void);
 void	ft_perror(char *msg);

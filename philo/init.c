@@ -109,60 +109,24 @@ void	sim_destroy(t_simulation *sim)
 
 void	sim_monitor(t_simulation *sim)
 {
+	unsigned int	i;
+
 	while (1)
 	{
 		usleep(1000);
-		if (philos_dead(sim))
-			break ;
-	}
-}
-
-int	philos_finished(t_simulation *sim)
-{
-	unsigned int	i;
-	unsigned int	satisfied;
-
-	if (!sim->n_meal)
-		return (0);
-	i = 0;
-	satisfied = 0;
-	while (i < sim->n_philo)
-	{
-		pthread_mutex_lock(&sim->meal_lock);
-		if (sim->philos[i].meal_counter == sim->n_meal && !sim->philos[i].eating)
-			satisfied++;
-		pthread_mutex_unlock(&sim->meal_lock);
-		if (satisfied == sim->n_philo)
-			return (sim_quit(sim), 1);
-		i++;
-	}
-	return (0);
-}
-
-int	philos_dead(t_simulation *sim)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (i < sim->n_philo)
-	{
-		pthread_mutex_lock(&sim->meal_lock);
-		if (get_time() - sim->philos[i].last_meal > sim->t_die)
+		i = 0;
+		while (i < sim->n_philo)
 		{
-			print(&sim->philos[i], DEAD);
-			sim_quit(sim);
+			pthread_mutex_lock(&sim->meal_lock);
+			if (get_time() - sim->philos[i].last_meal > sim->t_die)
+			{
+				print(&sim->philos[i], DEAD);
+				sim_quit(sim);
+			}
+			if (check_quit(sim))
+				return ((void)pthread_mutex_unlock(&sim->meal_lock));
+			pthread_mutex_unlock(&sim->meal_lock);
+			i++;
 		}
-		if (check_quit(sim))
-			return (pthread_mutex_unlock(&sim->meal_lock), 1);
-		pthread_mutex_unlock(&sim->meal_lock);
-		i++;
 	}
-	return (0);
-}
-
-void	sim_quit(t_simulation *sim)
-{
-	pthread_mutex_lock(&sim->dead_lock);
-	sim->if_quit = 1;
-	pthread_mutex_unlock(&sim->dead_lock);
 }

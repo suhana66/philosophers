@@ -86,7 +86,8 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	if (philo->meal_counter == philo->sim->n_meal)
 		philo->sim->satisfied++;
 	if (philo->sim->satisfied == philo->sim->n_philo)
-		return (sim_quit(philo->sim), pthread_mutex_unlock(&philo->sim->meal_lock), 2);
+		return (sim_quit(philo->sim),
+			pthread_mutex_unlock(&philo->sim->meal_lock), 2);
 	pthread_mutex_unlock(&philo->sim->meal_lock);
 	return (0);
 }
