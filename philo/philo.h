@@ -40,7 +40,6 @@ typedef struct s_simulation
 	unsigned int	t_eat;
 	unsigned int	t_sleep;
 	unsigned int	n_meal;
-	int				if_limit;
 	int				if_quit;
 	size_t			start_time;
 	pthread_mutex_t	dead_lock;

@@ -16,14 +16,14 @@ int	sim_init(t_simulation *sim, int argc, char **argv)
 {
 	if (argc != 4 && argc != 5)
 		return (ft_perror(USAGE_ERR), 1);
+	sim->if_quit = 0;
+	sim->n_meal = 0;
 	if (str_to_natural(argv[0], &sim->n_philo)
 		|| str_to_natural(argv[1], &sim->t_die)
 		|| str_to_natural(argv[2], &sim->t_eat)
 		|| str_to_natural(argv[3], &sim->t_sleep)
 		|| (argc == 5 && str_to_natural(argv[4], &sim->n_meal)))
 		return (ft_perror(INVALID_ARGS_ERR), 2);
-	sim->if_quit = 0;
-	sim->if_limit = (argc == 5);
 	if (pthread_mutex_init(&sim->write_lock, NULL))
 		return (ft_perror(MUTEX_INIT_ERR), 3);
 	if (pthread_mutex_init(&sim->dead_lock, NULL))
@@ -121,6 +121,8 @@ int	philos_finished(t_simulation *sim)
 	unsigned int	i;
 	unsigned int	satisfied;
 
+	if (!sim->n_meal)
+		return (0);
 	i = 0;
 	satisfied = 0;
 	while (i < sim->n_philo)

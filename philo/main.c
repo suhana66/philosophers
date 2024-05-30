@@ -59,7 +59,7 @@ void	*routine(t_philo *philo)
 		do_sleep(philo->sim->t_sleep, philo->sim);
 		print(philo, THINKING);
 		pthread_mutex_lock(&philo->sim->meal_lock);
-		if (philo->sim->if_limit && philo->meal_counter == philo->sim->n_meal)
+		if (philo->sim->n_meal && philo->meal_counter == philo->sim->n_meal)
 		{
 			pthread_mutex_unlock(&philo->sim->meal_lock);
 			break ;
