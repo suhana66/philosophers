@@ -23,14 +23,14 @@ int	main(int argc, char **argv)
 	sim.start_time = get_time();
 	while (i < sim.n_philo)
 	{
+		sim.philos[i].last_meal = get_time();
 		// delete all previousley created threads
 		if (pthread_create(&sim.philos[i].thread, NULL,
 				(void *(*)(void *))routine, &sim.philos[i]))
 			return (ft_perror(THREAD_CREATE_ERR), sim_destroy(&sim), 2);
 		i++;
 	}
-	while (!sim_quit(&sim))
-		do_sleep(1, &sim);
+	sim_monitor(&sim);
 	i = 0;
 	while (i < sim.n_philo)
 		if (pthread_join(sim.philos[i++].thread, NULL))

@@ -55,7 +55,6 @@ typedef struct s_philo
 	pthread_t			thread;
 	struct s_simulation	*sim;
 	int					eating;
-	size_t				start_time;
 	size_t				last_meal;
 	unsigned int		meal_counter;
 	pthread_mutex_t		fork;
@@ -65,7 +64,10 @@ int		sim_init(t_simulation *sim, int argc, char **argv);
 int		str_to_natural(char *str, unsigned int *result);
 int		philos_init(t_simulation *sim);
 void	sim_destroy(t_simulation *sim);
-int		sim_quit(t_simulation *sim);
+void	sim_monitor(t_simulation *sim);
+int		philos_finished(t_simulation *sim);
+int		philos_dead(t_simulation *sim);
+void	sim_quit(t_simulation *sim);
 
 void	*routine(t_philo *philo);
 int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
