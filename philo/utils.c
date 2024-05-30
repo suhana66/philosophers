@@ -43,15 +43,19 @@ size_t	get_time(void)
 {
 	struct timeval	tv;
 
-	gettimeofday(&tv, NULL);
+	if (gettimeofday(&tv, NULL))
+		ft_perror(TIME_ERR);
 	return ((size_t)tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 void	ft_perror(char *msg)
 {
+	size_t	len;
+
 	if (!msg)
 		return ;
-	while (*msg)
-		write(2, msg++, 1);
-	write(2, "\n", 1);
+	len = 0;
+	while (msg[len])
+		len++;
+	write(2, msg, len);
 }

@@ -39,8 +39,8 @@ int	main(int argc, char **argv)
 
 void	*routine(t_philo *philo)
 {
-	t_fork	*fork1;
-	t_fork	*fork2;
+	pthread_mutex_t	*fork1;
+	pthread_mutex_t	*fork2;
 
 	if (philo->id % 2)
 	{
@@ -63,7 +63,7 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
-int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
+int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 {
 	if (fork1 == fork2)
 		return (print(philo, TAKEN_FORK), 1);
@@ -79,25 +79,15 @@ int	eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2)
 	philo->meal_counter++;
 	philo->eating = 0;
 	pthread_mutex_unlock(&philo->sim->meal_lock);
-	pthread_mutex_unlock(&fork1->mutex);
-	pthread_mutex_unlock(&fork2->mutex);
+	pthread_mutex_unlock(fork1);
+	pthread_mutex_unlock(fork2);
 	return (0);
 }
 
-void	pick_fork(t_philo *philo, t_fork *fork)
+void	pick_fork(t_philo *philo, pthread_mutex_t *fork)
 {
-	while (1)
-	{
-		pthread_mutex_lock(&fork->mutex);
-		if (philo->id == fork->value)
-		{
-			pthread_mutex_unlock(&fork->mutex);
-			continue ;
-		}
-		fork->value = philo->id;
-		print(philo, TAKEN_FORK);
-		break ;
-	}
+	pthread_mutex_lock(fork);
+	print(philo, TAKEN_FORK);
 }
 
 void	print(t_philo *philo, char *action)

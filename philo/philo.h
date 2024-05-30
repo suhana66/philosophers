@@ -19,12 +19,13 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-# define USAGE_ERR "usage: ./philo <n_philo> <t_die> <t_eat> <t_sleep> [n_meal]"
-# define INVALID_ARGS_ERR "an invalid argument was entered"
-# define MUTEX_INIT_ERR "could not initialize mutex"
-# define MALLOC_ERR "a memory allocation error occurred"
-# define THREAD_CREATE_ERR "could not create thread"
-# define THREAD_JOIN_ERR "could not join thread"
+# define USAGE_ERR "use: ./philo <n_philo> <t_die> <t_eat> <t_sleep> [n_meal]\n"
+# define INVALID_ARGS_ERR "an invalid argument was entered\n"
+# define MUTEX_INIT_ERR "could not initialize mutex\n"
+# define MALLOC_ERR "a memory allocation error occurred\n"
+# define THREAD_CREATE_ERR "could not create thread\n"
+# define THREAD_JOIN_ERR "could not join thread\n"
+# define TIME_ERR "could not get time\n"
 
 # define TAKEN_FORK "has taken a fork"
 # define EATING "is eating"
@@ -48,12 +49,6 @@ typedef struct s_simulation
 	struct s_philo	*philos;
 }					t_simulation;
 
-typedef struct s_fork
-{
-	pthread_mutex_t	mutex;
-	unsigned int	value;
-}					t_fork;
-
 typedef struct s_philo
 {
 	unsigned int		id;
@@ -63,7 +58,7 @@ typedef struct s_philo
 	size_t				start_time;
 	size_t				last_meal;
 	unsigned int		meal_counter;
-	struct s_fork		fork;
+	pthread_mutex_t		fork;
 }						t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
@@ -73,8 +68,8 @@ void	sim_destroy(t_simulation *sim);
 int		sim_quit(t_simulation *sim);
 
 void	*routine(t_philo *philo);
-int		eat(t_philo *philo, t_fork	*fork1, t_fork	*fork2);
-void	pick_fork(t_philo *philo, t_fork *fork);
+int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
+void	pick_fork(t_philo *philo, pthread_mutex_t *fork);
 void	print(t_philo *philo, char *action);
 
 int		check_quit(t_simulation *sim);
