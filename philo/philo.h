@@ -54,7 +54,6 @@ typedef struct s_philo
 	unsigned int		id;
 	pthread_t			thread;
 	struct s_simulation	*sim;
-	int					eating;
 	size_t				last_meal;
 	unsigned int		meal_counter;
 	pthread_mutex_t		fork;
