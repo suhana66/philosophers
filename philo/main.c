@@ -24,18 +24,14 @@ int	main(int argc, char **argv)
 	while (i < sim.n_philo)
 	{
 		sim.philos[i].last_meal = get_time();
-		// delete all previousley created threads
 		if (pthread_create(&sim.philos[i].thread, NULL,
 				(void *(*)(void *))routine, &sim.philos[i]))
-			return (ft_perror(THREAD_CREATE_ERR), sim_destroy(&sim), 2);
+			return (sim_quit(&sim, i), ft_perror(THREAD_CREATE_ERR), 2);
 		i++;
 	}
 	sim_monitor(&sim);
-	i = 0;
-	while (i < sim.n_philo)
-		if (pthread_join(sim.philos[i++].thread, NULL))
-			return (ft_perror(THREAD_JOIN_ERR), sim_destroy(&sim), 3);
-	return (sim_destroy(&sim), 0);
+	sim_quit(&sim, sim.n_philo);
+	return (0);
 }
 
 void	*routine(t_philo *philo)

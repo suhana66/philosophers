@@ -60,8 +60,8 @@ typedef struct s_philo
 int		sim_init(t_simulation *sim, int argc, char **argv);
 int		str_to_natural(char *str, unsigned int *result);
 int		philos_init(t_simulation *sim);
-void	sim_destroy(t_simulation *sim);
 void	sim_monitor(t_simulation *sim);
+void	sim_quit(t_simulation *sim, unsigned int n_thread);
 
 void	*routine(t_philo *philo);
 int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);

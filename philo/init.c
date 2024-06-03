@@ -83,17 +83,6 @@ int	philos_init(t_simulation *sim)
 	return (0);
 }
 
-void	sim_destroy(t_simulation *sim)
-{
-	unsigned int	i;
-
-	i = 0;
-	pthread_mutex_destroy(&sim->mutex);
-	while (i < sim->n_philo)
-		pthread_mutex_destroy(&sim->philos[i++].fork);
-	free(sim->philos);
-}
-
 void	sim_monitor(t_simulation *sim)
 {
 	unsigned int	i;
@@ -120,4 +109,22 @@ void	sim_monitor(t_simulation *sim)
 			i++;
 		}
 	}
+}
+
+void	sim_quit(t_simulation *sim, unsigned int n_thread)
+{
+	unsigned int	i;
+
+	pthread_mutex_lock(&sim->mutex);
+	sim->if_quit = 1;
+	pthread_mutex_unlock(&sim->mutex);
+	i = 0;
+	while (i < sim->n_philo)
+	{
+		if (i < n_thread && pthread_join(sim->philos[i].thread, NULL))
+			ft_perror(THREAD_JOIN_ERR);
+		pthread_mutex_destroy(&sim->philos[i++].fork);
+	}
+	pthread_mutex_destroy(&sim->mutex);
+	free(sim->philos);
 }
