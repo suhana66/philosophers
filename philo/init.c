@@ -103,11 +103,7 @@ void	sim_monitor(t_simulation *sim)
 		usleep(1000);
 		pthread_mutex_lock(&sim->mutex);
 		if (sim->satisfied == sim->n_philo)
-		{
-			sim->if_quit = 1;
-			pthread_mutex_unlock(&sim->mutex);
-			return ;
-		}
+			return (sim->if_quit = 1, (void)pthread_mutex_unlock(&sim->mutex));
 		pthread_mutex_unlock(&sim->mutex);
 		i = 0;
 		while (i < sim->n_philo)
@@ -117,9 +113,9 @@ void	sim_monitor(t_simulation *sim)
 			{
 				print(&sim->philos[i], DEAD, 0);
 				sim->if_quit = 1;
+				pthread_mutex_unlock(&sim->mutex);
+				return ;
 			}
-			if (sim->if_quit)
-				return ((void)pthread_mutex_unlock(&sim->mutex));
 			pthread_mutex_unlock(&sim->mutex);
 			i++;
 		}
