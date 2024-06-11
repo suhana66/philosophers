@@ -36,8 +36,8 @@ int	main(int argc, char **argv)
 
 void	*routine(t_philo *philo)
 {
-	pthread_mutex_t	*fork1;
-	pthread_mutex_t	*fork2;
+	t_fork	*fork1;
+	t_fork	*fork2;
 
 	fork1 = &philo->fork;
 	fork2 = &philo->sim->philos[philo->id % philo->sim->n_philo].fork;
@@ -60,12 +60,12 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
-int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
+int	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
 {
 	if (fork1 == fork2)
 		return (print(philo, TAKEN_FORK, 1), 1);
-	pthread_mutex_lock(fork1);
-	pthread_mutex_lock(fork2);
+	pthread_mutex_lock(&fork1->mutex);
+	pthread_mutex_lock(&fork2->mutex);
 	pthread_mutex_lock(&philo->sim->mutex);
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->sim->mutex);
@@ -73,8 +73,8 @@ int	eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2)
 	print(philo, TAKEN_FORK, 1);
 	print(philo, EATING, 1);
 	do_sleep(philo->sim->t_eat, philo->sim);
-	pthread_mutex_unlock(fork1);
-	pthread_mutex_unlock(fork2);
+	pthread_mutex_unlock(&fork1->mutex);
+	pthread_mutex_unlock(&fork2->mutex);
 	pthread_mutex_lock(&philo->sim->mutex);
 	philo->meal_counter++;
 	if (philo->meal_counter == philo->sim->n_meal)

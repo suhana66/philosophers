@@ -72,12 +72,15 @@ int	philos_init(t_simulation *sim)
 		sim->philos[i].id = i + 1;
 		sim->philos[i].sim = sim;
 		sim->philos[i].meal_counter = 0;
-		if (pthread_mutex_init(&sim->philos[i].fork, NULL))
+		if (pthread_mutex_init(&sim->philos[i].fork.mutex, NULL))
 		{
 			while (i-- > 0)
-				pthread_mutex_destroy(&sim->philos[i].fork);
+				pthread_mutex_destroy(&sim->philos[i].fork.mutex);
 			return (free(sim->philos), ft_perror(MUTEX_INIT_ERR), 2);
 		}
+		sim->philos[i].fork.owner_id = sim->philos[i].id;
+		sim->philos[i].fork.owner_used = 0;
+		sim->philos[i].fork.available = 1;
 		i++;
 	}
 	return (0);
@@ -123,7 +126,7 @@ void	sim_quit(t_simulation *sim, unsigned int n_thread)
 	{
 		if (i < n_thread && pthread_join(sim->philos[i].thread, NULL))
 			ft_perror(THREAD_JOIN_ERR);
-		pthread_mutex_destroy(&sim->philos[i++].fork);
+		pthread_mutex_destroy(&sim->philos[i++].fork.mutex);
 	}
 	pthread_mutex_destroy(&sim->mutex);
 	free(sim->philos);

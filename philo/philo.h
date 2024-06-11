@@ -47,6 +47,14 @@ typedef struct s_simulation
 	struct s_philo	*philos;
 }					t_simulation;
 
+typedef struct s_fork
+{
+	unsigned int	owner_id;
+	int				owner_used;
+	pthread_mutex_t	mutex;
+	int				available;
+}	t_fork;
+
 typedef struct s_philo
 {
 	unsigned int		id;
@@ -54,7 +62,7 @@ typedef struct s_philo
 	struct s_simulation	*sim;
 	size_t				last_meal;
 	unsigned int		meal_counter;
-	pthread_mutex_t		fork;
+	t_fork				fork;
 }						t_philo;
 
 int		sim_init(t_simulation *sim, int argc, char **argv);
@@ -64,7 +72,7 @@ void	sim_monitor(t_simulation *sim);
 void	sim_quit(t_simulation *sim, unsigned int n_thread);
 
 void	*routine(t_philo *philo);
-int		eat(t_philo *philo, pthread_mutex_t	*fork1, pthread_mutex_t	*fork2);
+int		eat(t_philo *philo, t_fork *fork1, t_fork *fork2);
 void	print(t_philo *philo, char *action, int if_lock);
 
 int		check_quit(t_simulation *sim);
