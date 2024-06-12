@@ -71,6 +71,7 @@ int	philos_init(t_simulation *sim)
 	{
 		sim->philos[i].id = i + 1;
 		sim->philos[i].sim = sim;
+		sim->philos[i].eating = 0;
 		sim->philos[i].meal_counter = 0;
 		if (pthread_mutex_init(&sim->philos[i].fork.mutex, NULL))
 		{
