@@ -59,32 +59,51 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
-void	pick_fork(t_philo *philo, t_fork *fork)
-{
-	(void)philo;
-	(void)fork;
-}
-
 void	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
 {
-	pthread_mutex_lock(&fork1->mutex);
-	pthread_mutex_lock(&fork2->mutex);
-	print(philo, TAKEN_FORK, 1);
-	print(philo, TAKEN_FORK, 1);
+	change_fork_state(philo, fork1, 1);
+	change_fork_state(philo, fork2, 1);
 	pthread_mutex_lock(&philo->sim->mutex);
 	philo->last_meal = get_time();
 	philo->eating = 1;
 	pthread_mutex_unlock(&philo->sim->mutex);
 	print(philo, EATING, 1);
 	do_sleep(philo->sim->t_eat, philo->sim);
-	pthread_mutex_unlock(&fork1->mutex);
-	pthread_mutex_unlock(&fork2->mutex);
+	change_fork_state(philo, fork1, 0);
+	change_fork_state(philo, fork2, 0);
 	pthread_mutex_lock(&philo->sim->mutex);
 	philo->eating = 0;
 	philo->meal_counter++;
 	if (philo->meal_counter == philo->sim->n_meal)
 		philo->sim->satisfied++;
 	pthread_mutex_unlock(&philo->sim->mutex);
+}
+
+void	change_fork_state(t_philo *philo, t_fork *fork, int if_take)
+{
+	if (!if_take)
+	{
+		pthread_mutex_lock(&fork->mutex);
+		fork->available = 1;
+		fork->owner_used = &philo->fork == fork;
+		pthread_mutex_unlock(&fork->mutex);
+		return ;
+	}
+	while (!check_quit(philo->sim))
+	{
+		pthread_mutex_lock(&fork->mutex);
+		if (fork->available && (fork->owner_used == -1
+				|| (fork->owner_used && &philo->fork != fork)
+				|| (!fork->owner_used && &philo->fork == fork)))
+		{
+			fork->available = 0;
+			pthread_mutex_unlock(&fork->mutex);
+			print(philo, TAKEN_FORK, 1);
+			return ;
+		}
+		pthread_mutex_unlock(&fork->mutex);
+		usleep(100);
+	}
 }
 
 void	print(t_philo *philo, char *action, int if_lock)
