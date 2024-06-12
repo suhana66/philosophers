@@ -47,10 +47,11 @@ void	*routine(t_philo *philo)
 		fork2 = &philo->fork;
 		do_sleep(philo->sim->t_eat, philo->sim);
 	}
+	if (fork1 == fork2)
+		return (print(philo, TAKEN_FORK, 1), NULL);
 	while (!check_quit(philo->sim))
 	{
-		if (eat(philo, fork1, fork2))
-			break ;
+		eat(philo, fork1, fork2);
 		print(philo, SLEEPING, 1);
 		do_sleep(philo->sim->t_sleep, philo->sim);
 		print(philo, THINKING, 1);
@@ -60,10 +61,8 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
-int	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
+void	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
 {
-	if (fork1 == fork2)
-		return (print(philo, TAKEN_FORK, 1), 1);
 	pthread_mutex_lock(&fork1->mutex);
 	pthread_mutex_lock(&fork2->mutex);
 	pthread_mutex_lock(&philo->sim->mutex);
@@ -80,7 +79,6 @@ int	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
 	if (philo->meal_counter == philo->sim->n_meal)
 		philo->sim->satisfied++;
 	pthread_mutex_unlock(&philo->sim->mutex);
-	return (0);
 }
 
 void	print(t_philo *philo, char *action, int if_lock)

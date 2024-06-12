@@ -72,7 +72,7 @@ void	sim_monitor(t_simulation *sim);
 void	sim_quit(t_simulation *sim, unsigned int n_thread);
 
 void	*routine(t_philo *philo);
-int		eat(t_philo *philo, t_fork *fork1, t_fork *fork2);
+void	eat(t_philo *philo, t_fork *fork1, t_fork *fork2);
 void	print(t_philo *philo, char *action, int if_lock);
 
 int		check_quit(t_simulation *sim);
