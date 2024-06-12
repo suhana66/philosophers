@@ -123,12 +123,12 @@ void	sim_quit(t_simulation *sim, unsigned int n_thread)
 	sim->if_quit = 1;
 	pthread_mutex_unlock(&sim->mutex);
 	i = 0;
-	while (i < sim->n_philo)
-	{
-		if (i < n_thread && pthread_join(sim->philos[i].thread, NULL))
+	while (i < n_thread)
+		if (pthread_join(sim->philos[i++].thread, NULL))
 			ft_perror(THREAD_JOIN_ERR);
+	i = 0;
+	while (i < sim->n_philo)
 		pthread_mutex_destroy(&sim->philos[i++].fork.mutex);
-	}
-	pthread_mutex_destroy(&sim->mutex);
 	free(sim->philos);
+	pthread_mutex_destroy(&sim->mutex);
 }
