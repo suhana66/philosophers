@@ -101,7 +101,8 @@ void	sim_monitor(t_simulation *sim)
 		while (i < sim->n_philo)
 		{
 			pthread_mutex_lock(&sim->mutex);
-			if (get_time() - sim->philos[i].last_meal > sim->t_die)
+			if (get_time() - sim->philos[i].last_meal > sim->t_die
+				&& !sim->philos[i].eating)
 			{
 				print(&sim->philos[i], DEAD, 0);
 				sim->if_quit = 1;

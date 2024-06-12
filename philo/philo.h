@@ -61,6 +61,7 @@ typedef struct s_philo
 	pthread_t			thread;
 	struct s_simulation	*sim;
 	size_t				last_meal;
+	int					eating;
 	unsigned int		meal_counter;
 	t_fork				fork;
 }						t_philo;
