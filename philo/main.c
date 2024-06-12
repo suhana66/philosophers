@@ -59,6 +59,12 @@ void	*routine(t_philo *philo)
 	return (NULL);
 }
 
+void	pick_fork(t_philo *philo, t_fork *fork)
+{
+	(void)philo;
+	(void)fork;
+}
+
 void	eat(t_philo *philo, t_fork *fork1, t_fork *fork2)
 {
 	pthread_mutex_lock(&fork1->mutex);

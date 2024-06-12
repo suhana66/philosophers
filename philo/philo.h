@@ -49,10 +49,9 @@ typedef struct s_simulation
 
 typedef struct s_fork
 {
-	unsigned int	owner_id;
-	int				owner_used;
 	pthread_mutex_t	mutex;
 	int				available;
+	int				owner_used;
 }	t_fork;
 
 typedef struct s_philo
@@ -74,6 +73,7 @@ void	sim_quit(t_simulation *sim, unsigned int n_thread);
 
 void	*routine(t_philo *philo);
 void	eat(t_philo *philo, t_fork *fork1, t_fork *fork2);
+void	pick_fork(t_philo *philo, t_fork *fork);
 void	print(t_philo *philo, char *action, int if_lock);
 
 int		check_quit(t_simulation *sim);

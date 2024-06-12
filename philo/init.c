@@ -78,9 +78,8 @@ int	philos_init(t_simulation *sim)
 				pthread_mutex_destroy(&sim->philos[i].fork.mutex);
 			return (free(sim->philos), ft_perror(MUTEX_INIT_ERR), 2);
 		}
-		sim->philos[i].fork.owner_id = sim->philos[i].id;
-		sim->philos[i].fork.owner_used = 0;
 		sim->philos[i].fork.available = 1;
+		sim->philos[i].fork.owner_used = -1;
 		i++;
 	}
 	return (0);
